@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+     x:Class="TestApp.Themes.LightTheme">
+
+    <Color x:Key="WhiteColor">#FFFFFF</Color>
+    <Color x:Key="BlackColor">#292929</Color>
+    
+    <!--Primaries-->
+    <Color x:Key="PrimaryColor">#82AF52</Color>
+    <Color x:Key="PrimaryDarkColor">#405629</Color>
+    <Color x:Key="SecondaryColor">#BAD3A0</Color>
+    <Color x:Key="BackgroundColor">#D7E0CC</Color>
+
+    <!--Cards-->
+    <Color x:Key="CardColor">#EFF1ED</Color>
+    <Color x:Key="TopLayerCardColor">#FDFDFC</Color>
+    <Color x:Key="BottomLayerCardColor">#E3EADC</Color>
+
+    <!--Tags-->
+    <Color x:Key="SimpleTagColor">#CACEC6</Color>
+    <Color x:Key="SimpleTagLightColor">#D9DCD7</Color>
+    <Color x:Key="UserAvatarChipColor">#E6E8E5</Color>
+    <Color x:Key="HashtagBackgroundColor">#BFC4BA</Color>
+    <Color x:Key="SuggestedTagBackgroundColor">#E3E5E1</Color>
+    <Color x:Key="SuggestedTagBorderColor">#BFC4BA</Color>
+    
+    <!--Switches-->
+    <Color x:Key="SwitchFalseStateColor">#A0A0A0</Color>
+    <Color x:Key="SwitchTrueStateColor">#BAD3A0</Color>
+   
+    <!--Texts-->
+    <Color x:Key="PrimaryTextColor">#333333</Color>
+    <Color x:Key="CardTitleTextColor">#333333</Color>
+    <Color x:Key="CardSubtitleTextColor">#7D7D7D</Color>
+    <Color x:Key="InputTitleColor">#7D7D7D</Color>
+    <Color x:Key="DisabledTextColor">#A8A8A8</Color>
+    <Color x:Key="PlaceholderTextColor">#747474</Color>
+    <Color x:Key="FloatingTextColor">#747474</Color>
+    <Color x:Key="AccentTextColor">#368253</Color>
+    <Color x:Key="LinkTextColor">#3C5026</Color>
+    <Color x:Key="ErrorTextColor">#AF0000</Color>
+    <Color x:Key="SecondaryActionTextColor">#747474</Color>
+
+    <!--Separators-->
+    <Color x:Key="PrimarySeparatorColor">#292929</Color>
+    <Color x:Key="SecondarySeparatorColor">#E9E9E9</Color>
+    <Color x:Key="ContentDelimiterColor">#D1D1D1</Color>
+    <Color x:Key="FloatingEntryLayoutDelimiterColor">#292929</Color>
+    <Color x:Key="LinkedWorkUnitMarker">#283738</Color>
+
+    <!--Tabs-->
+    <Color x:Key="UnselectedTabColor">#585858</Color>
+    <Color x:Key="SelectedTabColor">#333333</Color>
+    <Color x:Key="SelectedTabIndicatorColor">#BAD3A0</Color>
+    <Color x:Key="BarBackgroundColor">#FFFFFF</Color>
+    
+    <!--Buttons-->
+    <Color x:Key="SecondaryButtonBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="SecondaryButtonBorderColor">#889A75</Color>
+    <Color x:Key="SecondaryButtonTextColor">#333333</Color>
+    <Color x:Key="PrimaryButtonBackgroundColor">#BAD3A0</Color>
+    <Color x:Key="PrimaryButtonBorderColor">#BAD3A0</Color>
+    <Color x:Key="PrimaryButtonTextColor">#333333</Color>
+
+    <!--Action states-->
+    <Color x:Key="SuccessColor">#5BB75B</Color>
+    <Color x:Key="InfoColor">#49AFCD</Color>
+    <Color x:Key="WarningColor">#FAA732</Color>
+    <Color x:Key="ErrorColor">#DA4F49</Color>
+
+    <!--<Color x:Key="AccentColor">#A39547</Color>-->
+
+</ResourceDictionary>    

@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<view:BaseView xmlns="http://xamarin.com/schemas/2014/forms" 
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:view="clr-namespace:TestApp.Views.Base"
+               xmlns:vmBase="clr-namespace:TestApp.ViewModels.Base"
+               xmlns:models="clr-namespace:TestApp.Models.TrainingDomain"
+               xmlns:views="clr-namespace:TestApp.Views"
+               xmlns:vms="clr-namespace:TestApp.ViewModels"
+               xmlns:controls="clr-namespace:TestApp.Controls"
+               xmlns:ext="clr-namespace:TestApp.Extensions"
+               xmlns:converters="clr-namespace:TestApp.Converters"
+               xmlns:templated="clr-namespace:TestApp.Controls.Templated"
+               mc:Ignorable="d"
+               x:Class="TestApp.Views.WorkUnitMainView"
+               vmBase:ViewModelLocator.AutoWireViewModel="True"
+               Title="{Binding WorkoutName}">
+
+    <view:BaseView.Resources>
+        <ResourceDictionary>
+
+            <!--Converters-->
+            <converters:IsStringNullOrEmptyConverter x:Key="IsEmptyConverter"/>
+            <converters:IsNullConverter x:Key="IsNullConverter"/>
+            <converters:NotNullConverter x:Key="NotNullConverter"/>
+            <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+
+            <!--Excercise Image-->
+            <Style TargetType="Image" x:Key="ExcerciseImage">
+                <Setter Property="WidthRequest" Value="48"/>
+                <Setter Property="HeightRequest" Value="48"/>
+                <Setter Property="Aspect" Value="AspectFit"/>
+                <Setter Property="Source" Value="{ext:ImageResource TestApp.Resources.star-icon-false.png}"/>
+            </Style>
+
+            <!--Excercise name-->
+            <Style TargetType="Label" x:Key="ExcerciseNameLabel">
+                <Setter Property="TextColor" Value="{x:StaticResource CardTitleTextColor}"/>
+                <Setter Property="VerticalTextAlignment" Value="End"/>
+                <Setter Property="FontSize" Value="Title"/>
+                <Setter Property="LineBreakMode" Value="CharacterWrap"/>
+                <Setter Property="VerticalOptions" Value="EndAndExpand"/>
+            </Style>
+
+            <!--Work unit note-->
+            <Style TargetType="Label" x:Key="WorkUnitNoteLabel">
+                <Setter Property="TextColor" Value="{x:StaticResource CardSubtitleTextColor}"/>
+                <Setter Property="FontSize" Value="Body"/>
+                <Setter Property="MaxLines" Value="3"/>
+                <Setter Property="LineBreakMode" Value="CharacterWrap"/>
+                <!--<Setter Property="IsVisible" Value="{Binding Note,Converter={x:StaticResource IsStringNotEmptyConverter}}"/>-->
+                <Style.Triggers>
+                    <!--Empty note in read mode ==> just show nothing -->
+                    <MultiTrigger TargetType="Label">
+                        <MultiTrigger.Conditions>
+                            <BindingCondition Binding="{Binding Note,Converter={StaticResource IsEmptyConverter}}" Value="True"/>
+                            <BindingCondition Binding="{Binding IsNewWorkUnit}" Value="False"/>
+                            <BindingCondition Binding="{Binding IsEditing}" Value="False"/>
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                            <Setter Property="HeightRequest" Value="0"/>
+                        </MultiTrigger.Setters>
+                    </MultiTrigger>
+                    <!--Empty note when editing ==> Add note -->
+                    <MultiTrigger TargetType="Label">
+                        <MultiTrigger.Conditions>
+                            <BindingCondition Binding="{Binding Note,Converter={StaticResource IsEmptyConverter}}" Value="True"/>
+                            <BindingCondition Binding="{Binding IsNewWorkUnit}" Value="True"/>
+                            <BindingCondition Binding="{Binding IsEditing}" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                            <!--<Setter Property="Text" Value="{x:Static vms:WorkUnitMainViewModel.NewNoteText}"/>-->
+                            <Setter Property="Text" Value="AVSBDBDSFBD WDGWS"/>
+                        </MultiTrigger.Setters>
+                    </MultiTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Add WS Primary Button-->
+            <Style TargetType="Button" BasedOn="{x:StaticResource PrimaryButton}" x:Key="AddWsButton">
+                <Setter Property="Margin" Value="10,0,10,0"/>
+            </Style>
+
+            <!--Work Unit detail component - might be invisible if no Excercise selected-->
+            <Style TargetType="{x:Type views:WorkUnitDetailView}">
+                <Setter Property="IsVisible" Value="{Binding Excercise,Converter={x:StaticResource NotNullConverter}}"/>
+            </Style>
+            
+            <!--Excercise missing warning-->
+            <!--<Style TargetType="Label" x:Key="ExcerciseMissingWarning">
+                <Setter Property="VerticalOptions" Value="Center"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="Text" Value="Please, choose an excercise"/>
+                <Setter Property="IsVisible" Value="{Binding Excercise,Converter={x:StaticResource IsNullConverter}}"/>
+            </Style>-->
+
+            <!--Floating Buttons container-->
+            <Style TargetType="Grid" x:Key="FloatingButtonsContainer">
+                <Setter Property="AbsoluteLayout.LayoutBounds" Value=".1,.9,.98,.1"/>
+                <Setter Property="AbsoluteLayout.LayoutFlags" Value="All"/>
+                <Setter Property="IsVisible" Value="False"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="Grid" Binding="{x:Binding IsEditing}" Value="True">
+                        <Setter Property="IsVisible" Value="True"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Secondary FAB buttons-->
+            <Style TargetType="Button" BasedOn="{x:StaticResource SecondaryButton}" x:Key="FloatingSecondaryButton">
+                <Setter Property="Margin" Value="5,0,5,0"/>
+                <Setter Property="HeightRequest" Value="{x:StaticResource StandardButtonHeight}"/>
+            </Style>
+           
+
+        </ResourceDictionary>
+    </view:BaseView.Resources>
+
+    <view:BaseView.ToolbarItems>
+        <templated:BindableToolbarItem Text="Finish" Order="Primary" IsVisible="{Binding IsEditing}" Command="{Binding SaveChangesCommand}" Priority="1"/>
+        <templated:BindableToolbarItem Text="Edit" Order="Primary" IsVisible="{Binding IsEditing,Converter={x:StaticResource InverseBooleanConverter}}" Command="{Binding StartEditingCommand}" Priority="1"/>
+        <templated:BindableToolbarItem Text="Undo" IsVisible="{Binding IsEditing}" Command="{Binding UndoChangesCommand}" Order="Primary" Priority="2"/>
+    </view:BaseView.ToolbarItems>
+
+    <view:BaseView.Content>
+        <AbsoluteLayout>
+            <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" 
+                        AbsoluteLayout.LayoutFlags="All">
+                <!--Common fields-->
+                <Grid Grid.Column="1"
+                      AbsoluteLayout.LayoutFlags="All"
+                      AbsoluteLayout.LayoutBounds="0,0,1,1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="{x:StaticResource StandardButtonHeight}"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <controls:HorizontalScrollableViewSelector ItemsSource="{Binding PlannedWorkUnits}" 
+                                                               SelectedItem="{Binding SelectedWorkUnit}"
+                                                               Grid.ColumnSpan="2"/>
+
+                    <Image Style="{x:StaticResource ExcerciseImage}"
+                           Grid.Row="1"/>
+
+                    <StackLayout Margin="5,0,0,0"
+                                 Grid.Row="1"
+                                 Grid.Column="1">
+                        <Label Text="{Binding Excercise.Name,FallbackValue=NotFound,TargetNullValue='Choose your excercise here'}" 
+                               Style="{x:StaticResource ExcerciseNameLabel}"/>
+                        <Label Text="{Binding Note}" 
+                               Style="{x:StaticResource WorkUnitNoteLabel}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenNoteDetailCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </StackLayout>
+                    <Button Style="{x:StaticResource AddWsButton}"
+                            Command="{Binding AddWorkingSetCommand}"
+                            Text="Add a working set"
+                            Grid.Row="2"
+                            Grid.ColumnSpan="2"/>
+
+                    <views:WorkUnitDetailView BindingContext="{Binding SelectedWorkUnit}"
+                                              Grid.Row="3"
+                                              Grid.ColumnSpan="2"/>
+
+                    <!--<Label Style="{x:StaticResource ExcerciseMissingWarning}"
+                           Grid.Row="3"
+                           Grid.ColumnSpan="2"/>-->
+                    
+                </Grid>
+            </ScrollView>
+            <!--Floating buttons-->
+            <Grid Style="{x:StaticResource FloatingButtonsContainer}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Style="{x:StaticResource FloatingSecondaryButton}"
+                            Command="{Binding CopyFromPreviousWorkoutCommand}"
+                            Text="Copy from previous week"/>
+                <Button Style="{x:StaticResource FloatingSecondaryButton}"
+                            Command="{Binding CopyAllFromThisCommand}"
+                            Text="Make all weeks like this one"
+                            Grid.Column="1"/>
+            </Grid>
+        </AbsoluteLayout>
+    </view:BaseView.Content>
+</view:BaseView>

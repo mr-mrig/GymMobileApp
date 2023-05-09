@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TestApp.Controls.ContentSeparator"
+             x:Name="this">
+
+    <ContentView.Content>
+
+        <StackLayout>
+
+            <BoxView BackgroundColor="{StaticResource PrimarySeparatorColor}" 
+                     VerticalOptions="End"
+                     HeightRequest="1"/>
+            <Label Text="{Binding Title,Source={Reference this}}"
+                   LineBreakMode="NoWrap" 
+                   Margin="15,0,0,0" 
+                   Grid.Row="1"/>
+        </StackLayout>
+        <!--<Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <BoxView BackgroundColor="{StaticResource BlackColor}" 
+                         VerticalOptions="End"/>
+            <Label Text="{Binding Title,Source={Reference this}}"
+                   LineBreakMode="NoWrap" 
+                   Margin="15,0,0,0" 
+                   Grid.Row="1"/>
+        </Grid>-->
+
+    </ContentView.Content>
+</ContentView>

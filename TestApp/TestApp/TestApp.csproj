@@ -1,0 +1,159 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\arrow-collapse.png" />
+    <None Remove="Resources\arrow-expand.png" />
+    <None Remove="Resources\avatar.png" />
+    <None Remove="Resources\chain-icon-false.png" />
+    <None Remove="Resources\chain-icon-true.png" />
+    <None Remove="Resources\close-icon.png" />
+    <None Remove="Resources\star-icon-false.png" />
+    <None Remove="Resources\star-icon-true.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\arrow-collapse.png" />
+    <EmbeddedResource Include="Resources\arrow-expand.png" />
+    <EmbeddedResource Include="Resources\avatar.png" />
+    <EmbeddedResource Include="Resources\chain-icon-false.png" />
+    <EmbeddedResource Include="Resources\chain-icon-true.png" />
+    <EmbeddedResource Include="Resources\close-icon.png" />
+    <EmbeddedResource Include="Resources\star-icon-false.png" />
+    <EmbeddedResource Include="Resources\star-icon-true.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Rg.Plugins.Popup" Version="1.2.0.223" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="1.68.1" />
+    <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="3.0.0.5" />
+    <PackageReference Include="Xamanimation" Version="1.3.0" />
+    <PackageReference Include="Xamarin.Forms" Version="4.4.0.991265" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Controls\ExpandableContentSeparator.xaml.cs">
+      <DependentUpon>ExpandableContentSeparator.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\SimpleTag.xaml.cs">
+      <DependentUpon>SimpleTag.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\StarToggle.xaml.cs">
+      <DependentUpon>StarSwitch.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Themes\Fonts.xaml.cs">
+      <DependentUpon>Fonts.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\SimpleTagContainer.xaml.cs">
+      <DependentUpon>SimpleTagContainer.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Popups\Common\AlertPopupView.xaml.cs">
+      <DependentUpon>AlertPopupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Popups\Common\DestructiveActionPopupView.xaml.cs">
+      <DependentUpon>DestructiveActionPopupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\TrainingPlanHashtagManagerView.xaml.cs">
+      <DependentUpon>TrainingPlanHashtagManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\TrainingPlansSummariesView.xaml.cs">
+      <DependentUpon>TrainingPlansSummariesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\WorkUnitDetailView.xaml.cs">
+      <DependentUpon>WorkUnitDetailView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\WorkUnitMainView.xaml.cs">
+      <DependentUpon>WorkUnitMainView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Controls\ContentSeparator.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\CustomStepper.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\FloatingLabelEntry.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\HorizontalScrollableViewSelector.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Popups\Common\AlertPopupView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Popups\Common\BaseEditingPopupView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Popups\Common\DestructiveActionPopupView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Popups\Common\LoadingPopup.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\StarToggle.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\UserAvatarChip.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Themes\LightTheme.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\TrainingPlanWorkoutView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\SimpleTagContainer.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Templates\SimpleTagPlainListTemplateView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\SimpleTag.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\TrainingPlanDetailView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\TrainingPlanMainView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\TrainingPlansSummariesView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\WorkUnitMainView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Behaviors\Base\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Views\Popups\Common\BaseEditingPopupView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+</Project>

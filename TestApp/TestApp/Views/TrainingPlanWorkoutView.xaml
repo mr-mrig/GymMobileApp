@@ -1,0 +1,409 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseView xmlns="http://xamarin.com/schemas/2014/forms"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:vmBase="clr-namespace:TestApp.ViewModels.Base"
+               xmlns:vm="clr-namespace:TestApp.ViewModels"
+               xmlns:extensions="clr-namespace:TestApp.Extensions"
+               xmlns:imgCircle="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
+               xmlns:models="clr-namespace:TestApp.Models.TrainingDomain"
+               mc:Ignorable="d"
+               vmBase:ViewModelLocator.AutoWireViewModel="False"
+               xmlns:view="clr-namespace:TestApp.Views.Base"
+               xmlns:ext="clr-namespace:TestApp.Extensions"
+               xmlns:templated="clr-namespace:TestApp.Controls.Templated"
+               xmlns:converters="clr-namespace:TestApp.Converters"
+               x:Class="TestApp.Views.TrainingPlanWorkoutView"
+               Title="{Binding WorkoutName}"
+               Padding="0">
+
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <!--Converters-->
+            <converters:IsLinkingIntensityTechniqueConverter x:Key="IsLinkedConverter"/>
+            <converters:IsStringNullOrEmptyConverter x:Key="IsEmptyConverter"/>
+            <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+            <converters:WorkUnitToFormattedIntensityTechniquesConverter x:Key="IntensityTechniquesConverter"/>
+            <converters:WorkUnitToFormattedEffortConverter x:Key="EffortConverter"/>
+            <converters:WorkUnitToFormattedRepetitionsConverter x:Key="RepetitionsConverter"/>
+            <converters:WorkUnitToFormattedRestConverter x:Key="RestConverter"/>
+            <converters:WorkUnitToFormattedTempoConverter x:Key="TempoConverter"/>
+
+            <!--WorkUnits main panel-->
+            <Style TargetType="StackLayout" x:Key="WorkUnitsContainer">
+                <Setter Property="Margin" Value="5,0,5,0"/>
+            </Style>
+            
+            <!--Workout main panel-->
+            <Style TargetType="StackLayout" x:Key="WorkoutContainer">
+                <Setter Property="BackgroundColor" Value="{x:StaticResource BottomLayerCardColor}"/>
+            </Style>
+
+            <!--Workouts separator-->
+            <Style TargetType="BoxView" x:Key="WorkoutSeparator">
+                <Setter Property="BackgroundColor" Value="{x:StaticResource PrimarySeparatorColor}"/>
+                <Setter Property="HeightRequest" Value="2"/>
+                <Setter Property="Margin" Value="10,0,10,10"/>
+            </Style>
+
+            <!--Week group heading-->
+            <Style TargetType="Label" x:Key="WeekGroupLabel">
+                <Setter Property="Margin" Value="20,20,0,10"/>
+                <Setter Property="FontSize" Value="Title"/>
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+            </Style>
+            
+            <!--Work units cards-->
+            <Style TargetType="Frame" x:Key="WorkUnitCard" Class="CardFrameClass">
+                <Setter Property="BackgroundColor" Value="{x:StaticResource TopLayerCardColor}"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Margin" Value="0,5,0,5"/>
+            </Style>
+
+            <!--Linked work unit box-->
+            <Style TargetType="BoxView" x:Key="LinkedWorkUnitBox">
+                <Setter Property="BackgroundColor" Value="{x:StaticResource LinkedWorkUnitMarker}"/>
+                <Setter Property="HeightRequest" Value="0"/>
+                <Setter Property="Margin" Value="30,0,30,0"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="BoxView" Binding="{Binding IntensityTechnique,Converter={x:StaticResource IsLinkedConverter}}" Value="True">
+                        <Setter Property="HeightRequest" Value="10"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Excercise Image-->
+            <Style TargetType="Image" x:Key="ExcerciseImage">
+                <Setter Property="WidthRequest" Value="48"/>
+                <Setter Property="HeightRequest" Value="48"/>
+                <Setter Property="Aspect" Value="AspectFit"/>
+                <Setter Property="Source" Value="{ext:ImageResource TestApp.Resources.star-icon-false.png}"/>
+            </Style>
+
+            <!--Excercise name-->
+            <Style TargetType="Label" x:Key="ExcerciseNameLabel">
+                <Setter Property="TextColor" Value="{x:StaticResource CardTitleTextColor}"/>
+                <Setter Property="VerticalTextAlignment" Value="End"/>
+                <Setter Property="FontSize" Value="Title"/>
+                <Setter Property="MaxLines" Value="2"/>
+                <Setter Property="LineBreakMode" Value="CharacterWrap"/>
+                <Setter Property="VerticalOptions" Value="EndAndExpand"/>
+            </Style>
+
+            <!-- Label buttons -->
+            <Style TargetType="Label" x:Key="WorkUnitActionsLabel">
+                <Setter Property="TextColor" Value="{x:StaticResource CardTitleTextColor}"/>
+                <Setter Property="VerticalTextAlignment" Value="End"/>
+                <Setter Property="FontSize" Value="Title"/>
+                <Setter Property="MaxLines" Value="2"/>
+                <Setter Property="LineBreakMode" Value="CharacterWrap"/>
+                <Setter Property="VerticalOptions" Value="EndAndExpand"/>
+            </Style>
+            
+            <!--Work unit more actions button-->
+            <!--<Style TargetType="Label" x:Key="MoreActionsButtonLabel">
+                <Setter Property="Text" Value="..."/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Start"/>
+                <Setter Property="FontSize" Value="Title"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsEditingWorkUnit,Source={x:RelativeSource AncestorType={x:Type vm:TrainingPlanWorkoutViewModel}}}" Value="True">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>-->
+            
+            <!--Remove Work unit button-->
+            <Style TargetType="Label" x:Key="DeleteWorkUnitButtonLabel">
+                <Setter Property="Text" Value="X"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Start"/>
+                <Setter Property="FontSize" Value="Title"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsEditing,Source={x:RelativeSource AncestorType={x:Type vm:TrainingPlanWorkoutViewModel}}}" Value="False">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Work unit selection checkbox-->
+            <!--<Style TargetType="CheckBox" x:Key="SelectWorkUnitCheckbox">
+                <Setter Property="IsVisible" Value="False"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Start"/>
+                <Setter Property="Color" Value="{x:StaticResource SecondaryColor}"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="CheckBox" Binding="{Binding IsEditingWorkUnit,Source={x:RelativeSource AncestorType={x:Type vm:TrainingPlanWorkoutViewModel}}}" Value="True">
+                        <Setter Property="IsVisible" Value="True"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>-->
+
+
+            <!--Work unit note-->
+            <Style TargetType="Label" x:Key="WorkUnitNoteLabel">
+                <Setter Property="TextColor" Value="{x:StaticResource CardSubtitleTextColor}"/>
+                <Setter Property="FontSize" Value="Body"/>
+                <Setter Property="MaxLines" Value="3"/>
+                <Setter Property="LineBreakMode" Value="CharacterWrap"/>
+                <!--<Setter Property="IsVisible" Value="{Binding Note,Converter={x:StaticResource IsStringNotEmptyConverter}}"/>-->
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding Note,Converter={StaticResource IsEmptyConverter}}" Value="True">
+                        <Setter Property="HeightRequest" Value="0"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Working sets container -->
+            <Style TargetType="Grid" x:Key="WorkingSetsLayout">
+                <Setter Property="Padding" Value="0,0,5,5"/>
+            </Style>
+            
+            <!--Working sets columns headings-->
+            <Style TargetType="Label" x:Key="WorkingSetsHeadingLabel">
+                <Setter Property="TextColor" Value="{x:StaticResource CardTitleTextColor}"/>
+                <Setter Property="FontSize" Value="Body"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+            </Style>
+
+            <!--Working sets grid separators-->
+            <Style TargetType="BoxView" x:Key="WorkingSetsGridSeparator">
+                <Setter Property="BackgroundColor" Value="{x:StaticResource PrimarySeparatorColor}"/>
+                <!--<Setter Property="Margin" Value="0,15,0,15"/>-->
+            </Style>
+
+            <!--Working sets other training parameters-->
+            <Style TargetType="Label" x:Key="WorkingSetParametersLabel">
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="LineBreakMode" Value="TailTruncation"/>
+                <Setter Property="MaxLines" Value="2"/>
+            </Style>
+
+            <!--Working sets intensity techniques-->
+            <Style TargetType="Label" BasedOn="{x:StaticResource WorkingSetParametersLabel}" x:Key="IntensityTechniquesLabel">
+                <Setter Property="FontAttributes" Value="Bold"/>
+            </Style>
+
+            <!--Work Units buttons container-->
+            <Style TargetType="Grid" x:Key="WorkUnitsButtons">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Grid" Binding="{Binding ProgressiveNumber}" Value="0">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Grid" Binding="{Binding IsEditing,Source={x:RelativeSource AncestorType={x:Type vm:TrainingPlanWorkoutViewModel}}}" Value="False">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!--Link Work Units toggle button-->
+            <Style TargetType="templated:ToggleButton">
+                <Setter Property="CheckedImage" Value="{extensions:ImageResource TestApp.Resources.chain-icon-true.png}"/>
+                <Setter Property="UnCheckedImage" Value="{extensions:ImageResource TestApp.Resources.chain-icon-false.png}"/>
+                <Setter Property="Animate" Value="True"/>
+            </Style>
+
+            <Style TargetType="Label" x:Key="AddExcerciseLabel">
+                <Setter Property="TextColor" Value="{x:StaticResource LinkTextColor}"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+            </Style>
+            
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <!--Special Toolbar items that are displayed only on EditingMode-->
+    <!--<ContentPage.ToolbarItems>
+        <templated:BindableToolbarItem Text="Cancel" Order="Primary" IsVisible="{Binding IsEditingWorkUnit}" Command="{Binding CancelCommand}" Priority="1"/>
+        <templated:BindableToolbarItem Text="Link" Order="Primary" IsVisible="{Binding IsEditingWorkUnit}" Command="{Binding LinkWorkUnitCommand}" Priority="2"/>
+        <templated:BindableToolbarItem Text="Delete" Order="Primary" IsVisible="{Binding IsEditingWorkUnit}" Command="{Binding DeleteWorkUnitCommand}" Priority="3"/>
+    </ContentPage.ToolbarItems>-->
+    <ContentPage.ToolbarItems>
+        <templated:BindableToolbarItem Text="Done" Order="Primary" IsVisible="{Binding IsEditing}" Command="{Binding StopEditingCommand}" Priority="1"/>
+        <templated:BindableToolbarItem Text="Edit" Order="Primary" IsVisible="{Binding IsEditing,Converter={x:StaticResource InverseBooleanConverter}}" Command="{Binding StartEditingCommand}" Priority="1"/>
+        <ToolbarItem Text="Delete" Command="{Binding DeleteWorkoutPlanCommand}" Order="Secondary" Priority="100"/>
+    </ContentPage.ToolbarItems>
+
+
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout BindableLayout.ItemsSource="{Binding WeeklyWorkouts}" 
+                         BackgroundColor="{x:StaticResource BackgroundColor}"
+                         x:DataType="{x:Type vm:TrainingPlanWorkoutViewModel}"
+                         Padding="0"
+                         Margin="0">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <!--Weeks-->
+                        <StackLayout x:DataType="{x:Type vm:GroupedWorkoutViewModels}">
+                            <Label Text="{Binding WeekProgressiveNumber,StringFormat='Week {0:N0}'}"
+                                   Style="{x:StaticResource WeekGroupLabel}"/>
+
+                            <StackLayout Style="{x:StaticResource WorkoutContainer}" 
+                                         BindableLayout.ItemsSource="{Binding Workouts}"
+                                         x:DataType="{x:Type vm:GroupedWorkoutViewModels}"
+                                         Grid.Row="1">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <!--Workouts per week-->
+                                        <StackLayout x:DataType="{x:Type vm:WorkoutViewModel}" Margin="0,0,0,10">
+                                            <BoxView Style="{x:StaticResource WorkoutSeparator}"/>
+
+                                            <!--Work Units-->
+                                            <!--RIGM: performance issues-->
+                                            <!--<StackLayout BindableLayout.ItemsSource="{Binding WorkUnitsViewModels,Source={x:RelativeSource AncestorType={x:Type vm:TrainingPlanWorkoutViewModel}}}">
+                                                <BindableLayout.ItemTemplate>
+                                                    <DataTemplate>
+                                                        -->
+                                            <!--<views:WorkUnitSummaryView/>-->
+                                            <!--
+                                                    </DataTemplate>
+                                                </BindableLayout.ItemTemplate>
+                                            </StackLayout>-->
+
+                                            <!--Work Unit and actions-->
+                                            <StackLayout BindableLayout.ItemsSource="{Binding WorkUnits}" Style="{x:StaticResource WorkUnitsContainer}">
+                                                <BindableLayout.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackLayout>
+                                                            <!--Actions-->
+                                                            <Grid x:DataType="{x:Type models:WorkUnitTemplate}" Style="{x:StaticResource WorkUnitsButtons}">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="36"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <templated:ToggleButton Checked="{Binding IntensityTechnique,Converter={x:StaticResource IsLinkedConverter}}"
+                                                                                        Command="{Binding LinkWorkUnitCommand,Source={RelativeSource AncestorType={x:Type vm:WorkoutViewModel}}}"
+                                                                                        CommandParameter="{Binding .}"/>
+                                                                <Label Style="{x:StaticResource AddExcerciseLabel}"
+                                                                       Text="Add an Excercise" 
+                                                                       Grid.Column="2">
+                                                                    <Label.GestureRecognizers>
+                                                                        <TapGestureRecognizer Command="{x:Binding AddWorkUnitCommand,Source={RelativeSource AncestorType={x:Type vm:TrainingPlanWorkoutViewModel}}}"
+                                                                                              CommandParameter="{Binding .}"/>
+                                                                    </Label.GestureRecognizers>
+                                                                </Label>
+                                                                <!--<Label Text="Link with the following" Grid.Column="1"/>-->
+                                                            </Grid>
+
+                                                            <!--Work unit card-->
+                                                            <Frame Style="{x:StaticResource WorkUnitCard}">
+                                                                <StackLayout x:DataType="{x:Type models:WorkUnitTemplate}">
+                                                                    <!--Excercise heading-->
+                                                                    <Grid Grid.Column="1">
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="*"/>
+                                                                        </Grid.RowDefinitions>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="48"/>
+                                                                            <ColumnDefinition Width="4*"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                        </Grid.ColumnDefinitions>
+
+
+                                                                        <Image Style="{x:StaticResource ExcerciseImage}"/>
+
+                                                                        <StackLayout Grid.Column="1" Margin="5,0,0,0">
+                                                                            <Label Text="{Binding Excercise.Name,FallbackValue=NotFound,TargetNullValue=NotFound}" 
+                                                                                   Style="{x:StaticResource ExcerciseNameLabel}"/>
+                                                                            <Label Text="{Binding Note}" 
+                                                                                   Style="{x:StaticResource WorkUnitNoteLabel}"/>
+                                                                        </StackLayout>
+
+                                                                        <!--Delete Work Unit button-->
+                                                                        <Label Style="{x:StaticResource DeleteWorkUnitButtonLabel}" 
+                                                                               Grid.Column="2">
+                                                                            <Label.GestureRecognizers>
+                                                                                <TapGestureRecognizer Command="{Binding DeleteWorkUnitCommand,Source={x:RelativeSource AncestorType={x:Type vm:WorkoutViewModel}}}" 
+                                                                                                      CommandParameter="{Binding .}"/>
+                                                                            </Label.GestureRecognizers>
+                                                                        </Label>
+                                                                        <!--Work Unit Selection: Mutually exclusive with the previous button-->
+                                                                        <!--<CheckBox Style="{x:StaticResource SelectWorkUnitCheckbox}"
+                                                                                  IsChecked="{Binding IsSelected}"
+                                                                                  Grid.Column="2"/>-->
+                                                                    </Grid>
+
+                                                                    <!--Working sets-->
+                                                                    <Grid Style="{x:StaticResource WorkingSetsLayout}"
+                                                                      Grid.Row="2"
+                                                                      Grid.ColumnSpan="3">
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="auto"/>
+                                                                            <RowDefinition Height="*"/>
+                                                                        </Grid.RowDefinitions>
+
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="45"/>
+                                                                            <ColumnDefinition Width="1"/>
+                                                                            <ColumnDefinition Width="3*"/>
+                                                                            <ColumnDefinition Width="1"/>
+                                                                            <ColumnDefinition Width="2*"/>
+                                                                            <ColumnDefinition Width="1"/>
+                                                                            <ColumnDefinition Width="2*"/>
+                                                                            <ColumnDefinition Width="1"/>
+                                                                            <ColumnDefinition Width="2*"/>
+                                                                        </Grid.ColumnDefinitions>
+
+                                                                        <!--Column headings-->
+                                                                        <Label Text="Reps" Style="{x:StaticResource WorkingSetsHeadingLabel}" Grid.Column="2"/>
+                                                                        <Label Text="Rest" Style="{x:StaticResource WorkingSetsHeadingLabel}" Grid.Column="4"/>
+                                                                        <Label Text="Cadence" Style="{x:StaticResource WorkingSetsHeadingLabel}" Grid.Column="6"/>
+                                                                        <Label Text="Effort" Style="{x:StaticResource WorkingSetsHeadingLabel}" Grid.Column="8"/>
+
+                                                                        <BoxView Style="{x:StaticResource WorkingSetsGridSeparator}" Grid.Row="1" Grid.Column="1"/>
+                                                                        <BoxView Style="{x:StaticResource WorkingSetsGridSeparator}" Grid.Row="1" Grid.Column="3"/>
+                                                                        <BoxView Style="{x:StaticResource WorkingSetsGridSeparator}" Grid.Row="1" Grid.Column="5"/>
+                                                                        <BoxView Style="{x:StaticResource WorkingSetsGridSeparator}" Grid.Row="1" Grid.Column="7"/>
+
+                                                                        <!--Columns - Working sets training parameters-->
+                                                                        <Label Text="{Binding .,Converter={x:StaticResource IntensityTechniquesConverter}}"
+                                                                           Style="{x:StaticResource WorkingSetParametersLabel}"
+                                                                           Grid.Row="1"/>
+                                                                        <Label Text="{Binding .,Converter={x:StaticResource RepetitionsConverter}}"
+                                                                           Style="{x:StaticResource WorkingSetParametersLabel}"
+                                                                           Grid.Row="1"
+                                                                           Grid.Column="2"/>
+                                                                        <Label Text="{Binding .,Converter={x:StaticResource RestConverter}}"
+                                                                           Style="{x:StaticResource WorkingSetParametersLabel}"
+                                                                           Grid.Row="1"
+                                                                           Grid.Column="4"/>
+                                                                        <Label Text="{Binding .,Converter={x:StaticResource TempoConverter}}"
+                                                                           Style="{x:StaticResource WorkingSetParametersLabel}"
+                                                                           Grid.Row="1"
+                                                                           Grid.Column="6"/>
+                                                                        <Label Text="{Binding .,Converter={x:StaticResource EffortConverter}}"
+                                                                           Style="{x:StaticResource WorkingSetParametersLabel}"
+                                                                           Grid.Row="1"
+                                                                           Grid.Column="8"/>
+                                                                    </Grid>
+
+                                                                    <StackLayout.GestureRecognizers>
+                                                                        <TapGestureRecognizer Command="{Binding OpenWorkUnitCommand,Source={x:RelativeSource AncestorType={x:Type vm:TrainingPlanWorkoutViewModel}}}"
+                                                                                              CommandParameter="{Binding .}"/>
+                                                                    </StackLayout.GestureRecognizers>
+                                                                </StackLayout>
+                                                            </Frame>
+                                                        </StackLayout>
+                                                    </DataTemplate>
+                                                </BindableLayout.ItemTemplate>
+                                            </StackLayout>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </StackLayout>
+                        </StackLayout>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+    
+</view:BaseView>

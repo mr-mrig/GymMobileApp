@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:PopupPage 
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:popupVm="clr-namespace:TestApp.ViewModels.Popups.Common"
+    xmlns:vmBase="clr-namespace:TestApp.ViewModels.Base"
+    xmlns:vm="clr-namespace:TestApp.ViewModels.Popups.Common"
+    xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+    xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
+    x:Class="TestApp.Views.Popups.Common.AlertPopupView"
+    vmBase:ViewModelLocator.AutoWireViewModel="True"
+    HasSystemPadding="False"
+    CloseWhenBackgroundIsClicked="False"
+    HeightRequest="50"
+    BackgroundColor="Transparent"
+    x:Name="this">
+
+    <pages:PopupPage.Resources>
+        <ResourceDictionary>
+
+            <Style TargetType="StackLayout" x:Key="AlertMainPanel">
+                <Setter Property="Orientation" Value="Horizontal"/>
+                <Setter Property="VerticalOptions" Value="Start"/>
+                <Setter Property="HeightRequest" Value="50"/>
+                <Setter Property="Padding" Value="20,0"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource InfoColor}"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="StackLayout" Binding="{Binding AlertType}" Value="{Static vm:AlertPopupType.Success}">
+                        <Setter Property="BackgroundColor" Value="{StaticResource SuccessColor}"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="StackLayout" Binding="{Binding AlertType}" Value="{Static vm:AlertPopupType.Warning}">
+                        <Setter Property="BackgroundColor" Value="{StaticResource WarningColor}"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="StackLayout" Binding="{Binding AlertType}" Value="{Static vm:AlertPopupType.Error}">
+                        <Setter Property="BackgroundColor" Value="{StaticResource ErrorColor}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!--Close button label-->
+            <Style TargetType="Label" x:Key="CloseButton">
+                <Setter Property="Text" Value="x"/>
+                <Setter Property="Padding" Value="15,5,15,5"/>
+                <Setter Property="VerticalOptions" Value="Start"/>
+            </Style>
+            
+        </ResourceDictionary>
+    </pages:PopupPage.Resources>
+
+    
+    <pages:PopupPage.Animation>
+        <animations:MoveAnimation PositionIn="Top" PositionOut="Top" />
+    </pages:PopupPage.Animation>
+
+    <StackLayout x:DataType="{x:Type vm:AlertPopupViewModel}"
+                 d:Style="{x:StaticResource AlertMainPanel}"
+                 x:Name="PopupPanel">
+        <!--<Image x:Name="alertImage" Source="note" HeightRequest="24" WidthRequest="24" />-->
+        <Label TextColor="Black" 
+               FontSize="Caption" 
+               HorizontalOptions="CenterAndExpand" 
+               VerticalOptions="CenterAndExpand" 
+               Text="cccc"/>
+               <!--Text="{Binding AlertMessage,TargetNullValue='An error has occured'}"/>-->
+        <Label Style="{StaticResource CloseButton}">
+            <Label.GestureRecognizers>
+                <!--<TapGestureRecognizer Command="{Binding ClosePopupAsync}"/>-->
+                <TapGestureRecognizer Tapped="ClosePopupAsync" BindingContext="{Reference this}"/>
+            </Label.GestureRecognizers>
+        </Label>
+    </StackLayout>
+</pages:PopupPage> 

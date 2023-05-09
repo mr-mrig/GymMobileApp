@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModelsBase="clr-namespace:TestApp.ViewModels.Base"
+             xmlns:templates="clr-namespace:TestApp.Views.Templates"
+             xmlns:vm="clr-namespace:TestApp.ViewModels"
+             xmlns:models="clr-namespace:TestApp.Models.TrainingDomain"
+             xmlns:ext="clr-namespace:TestApp.Extensions"
+             mc:Ignorable="d"
+             xmlns:view="clr-namespace:TestApp.Views.Base"
+             viewModelsBase:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:controls="clr-namespace:TestApp.Controls"
+             xmlns:templatedControls="clr-namespace:TestApp.Controls.Templated"
+             xmlns:imgCircle="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
+             xmlns:effects="clr-namespace:TestApp.Effects"
+             xmlns:behaviors="clr-namespace:TestApp.Behaviors"
+             x:Class="TestApp.Views.TrainingPlansSummariesView"
+             x:Name="this">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+
+            <ControlTemplate x:Key="EntryTemplate">
+                <Entry IsPassword="True" BackgroundColor="Yellow"/>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+
+    <ContentPage.Content>
+
+        <StackLayout BackgroundColor="{StaticResource BackgroundColor}" 
+                     x:DataType="{x:Type vm:TrainingPlansSummariesViewModel}">
+
+            <StackLayout Orientation="Horizontal"> 
+                <Label Text="Current User:" FontSize="Title"/>
+            </StackLayout>
+
+            <!--<StackLayout Orientation="Horizontal">
+                <controls:UserAvatarChip UserName="MyVeryLongDummyUserName"/>
+                <controls:UserAvatarChip/>
+            </StackLayout>-->
+
+            <!--<controls:FloatingLabelEntry Title="Entry Title"/>-->
+
+            <!--<templatedControls:CustomFloatingLabelEntry Title="Plan name"
+                                                  TitlePosition="PlaceholderAligned"
+                                                  Placeholder="Insert the plan name here..."
+                                                  FloatingTextColor="{x:StaticResource PlaceholderTextColor}" 
+                                                  BackgroundColor="{x:StaticResource WhiteColor}"
+                                                  Padding="0,0,0,20">
+                <templatedControls:CustomFloatingLabelEntry.EntryTemplate>
+                    <DataTemplate>
+                        <Entry HeightRequest="46" FontSize="18">
+                            <Entry.Effects>
+                                <effects:BorderlessEntryEffect/>
+                            </Entry.Effects>
+                        </Entry>
+                    </DataTemplate>
+                </templatedControls:CustomFloatingLabelEntry.EntryTemplate>
+            </templatedControls:CustomFloatingLabelEntry>-->
+
+            <Entry Placeholder="Type here" Keyboard="Default"/>
+
+            <ListView ItemsSource="{Binding TrainingPlanSummaries}" HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Frame BackgroundColor="{StaticResource WhiteColor}" CornerRadius="10" Margin="5">
+                                <StackLayout x:DataType="{x:Type models:TrainingPlanSummary}">
+
+                                    <!--Header layout-->
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="4*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+
+
+                                        <Label Text="{Binding SummaryInfo}" 
+                                               StyleClass="CardSubtitleLabelClass"/>
+
+                                        <Label Text="{Binding PlanName}" 
+                                               StyleClass="CardTitleLabelClass"
+                                               Grid.Row="1">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding OpenPlanCommand,Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={Type vm:TrainingPlansSummariesViewModel}}}" CommandParameter="{Binding .}"/>
+                                            </Label.GestureRecognizers>
+                                        </Label>
+
+                                        <controls:StarToggle IsToggled="{Binding IsBookmarked}"
+                                                             Grid.Column="1"
+                                                             Grid.Row="1"/>
+
+                                        <Label Text="{Binding TargetsInfo}" 
+                                               StyleClass="CardSubtitleLabelClass"
+                                               Grid.Row="2"/>
+                                    </Grid>
+
+                                    <!--Hashtags layout-->
+                                    <controls:SimpleTagContainer ReadOnly="True" ItemsSource="{Binding Hashtags}"/>
+
+                                    <!--Training parameters expandable layout-->
+                                    <controls:ExpandableContentSeparator Title="Training Parameters" x:Name="separator"/>
+                                    <StackLayout HeightRequest="0">
+                                        <StackLayout.Triggers>
+                                            <DataTrigger TargetType="StackLayout" Binding="{Binding IsExpanded,Source={Reference separator}}" Value="True">
+                                                <Setter Property="HeightRequest" Value="700"/>
+                                                <Setter Property="BackgroundColor" Value="Red"/>
+                                            </DataTrigger>
+                                        </StackLayout.Triggers>
+                                    </StackLayout>
+
+                                </StackLayout>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+
+    </ContentPage.Content>
+</view:BaseView>

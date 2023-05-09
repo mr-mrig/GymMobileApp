@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:TestApp.Controls.Templated"
+             mc:Ignorable="d"
+             x:Class="TestApp.Controls.HorizontalScrollableViewSelector"
+             x:Name="this">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <!--<Style TargetType="Image" x:Key="ScrollerButton">
+                <Setter Property="WidthRequest" Value="24"/>
+                <Setter Property="HeightRequest" Value="24"/>
+                <Setter Property="Aspect" Value="AspectFit"/>
+            </Style>
+
+            <Style TargetType="Image" BasedOn="{x:StaticResource ScrollerButton}" x:Key="LeftScrollerButton">
+                <Setter Property="Source" Value="{ext:ImageResource TestApp.Resources.star-icon-false.png}"/>
+            </Style>-->
+
+            <Style TargetType="Button" x:Key="ScrollerButton">
+                <Setter Property="FontSize" Value="Large"/>
+                <Setter Property="BackgroundColor" Value="{x:StaticResource SecondaryButtonBackgroundColor}"/>
+                <Setter Property="TextColor" Value="{x:StaticResource SecondaryButtonTextColor}"/>
+            </Style>
+
+            <Style TargetType="Label" x:Key="SelectedItemLabel">
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="TextColor" Value="{x:StaticResource PrimaryTextColor}"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    
+    <ContentView.Content>
+        <Grid BindingContext="{x:Reference this}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Style="{x:StaticResource ScrollerButton}" 
+                    Command="{Binding GoToPreviousCommand}" 
+                    Text="&lt;"/>
+            <Label Style="{x:StaticResource SelectedItemLabel}" Text="{Binding SelectedItem}" Grid.Column="1"/>
+            <Button Style="{x:StaticResource ScrollerButton}" 
+                    Command="{Binding GoToNextCommand}"  
+                    Text="&gt;" Grid.Column="2"/>
+
+        </Grid>
+    </ContentView.Content>
+</ContentView>

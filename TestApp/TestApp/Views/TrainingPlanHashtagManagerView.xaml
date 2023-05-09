@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TestApp.ViewModels"
+             xmlns:vmBase="clr-namespace:TestApp.ViewModels.Base"
+             xmlns:effects="clr-namespace:TestApp.Effects"
+             xmlns:controls="clr-namespace:TestApp.Controls"
+             xmlns:converters="clr-namespace:TestApp.Converters"
+             xmlns:models="clr-namespace:TestApp.Models.Common"
+             xmlns:utils="clr-namespace:TestApp.Services.Utils"
+             xmlns:view="clr-namespace:TestApp.Views.Base"
+             xmlns:behaviors="clr-namespace:TestApp.Behaviors"
+               xmlns:triggers="clr-namespace:TestApp.Triggers"
+               mc:Ignorable="d"
+             vmBase:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="TestApp.Views.TrainingPlanHashtagManagerView"
+             x:DataType="{x:Type vm:TrainingPlanHashtagManagerViewModel}"
+             Title="Manage hashtags"
+               x:Name="this">
+
+
+    <ContentPage.Resources>
+
+        <ResourceDictionary>
+
+            <!--Covnerters-->
+            <converters:GreaterEqualThanToBoolConverter x:Key="GreatherEqualThanConverter"/>
+
+            <!--Separator-->
+            <Style TargetType="BoxView">
+                <Setter Property="HeightRequest" Value="1"/>
+                <Setter Property="Margin" Value="0,10,0,10"/>
+                <Setter Property="Grid.ColumnSpan" Value="2"/>
+                <Setter Property="BackgroundColor" Value="{x:StaticResource ContentDelimiterColor}"/>
+            </Style>
+            
+            <!--Entry-->
+            <Style TargetType="Entry" x:Key="BorderlessEntryStyle">
+                <Setter Property="effects:BorderlessEntryEffect.IsBorderless" Value="true"/>
+                <Setter Property="Margin" Value="0,10,0,0"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="Keyboard" Value="Text"/>
+                <Setter Property="IsTextPredictionEnabled" Value="False"/>
+                <Setter Property="IsSpellCheckEnabled" Value="False"/>
+                <Setter Property="Placeholder" Value="Insert your hashtag here"/>
+                <Setter Property="MaxLength" Value="{x:Static utils:AppEnvironment.HashtagsMaxLength}"/>
+            </Style>
+
+            <!--Suggested hashtags-->
+            <Style TargetType="Frame" x:Key="SuggestedHashtagFrame">
+                <Setter Property="CornerRadius" Value="5"/>
+                <Setter Property="Margin" Value="0,10,15,0"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource WhiteColor}"/>
+                <Setter Property="BorderColor" Value="{StaticResource SuggestedTagBorderColor}"/>
+            </Style>
+
+            <Style TargetType="Label" x:Key="TagBodyLabel">
+                <Setter Property="FontSize" Value="Body"/>
+            </Style>
+
+            <!--All the labels which are section headers should inherit from this-->
+            <Style TargetType="Label" x:Key="SectionHeaderLeabel">
+                <Setter Property="TextColor" Value="{x:StaticResource FloatingTextColor}"/>
+                <Setter Property="Margin" Value="10,5,0,0"/>
+            </Style>
+
+            <Style TargetType="Label" x:Key="HashtagCounterLabel">
+                <Setter Property="HorizontalTextAlignment" Value="End"/>
+                <Setter Property="TextColor" Value="{x:StaticResource FloatingTextColor}"/>
+                <!--<Setter Property="Text" Value="{Binding PlanHashtags.Count, StringFormat='{0:N0}/'}"/>-->
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding PlanHashtags.Count,Converter={x:StaticResource GreatherEqualThanConverter},ConverterParameter={x:Static utils:AppEnvironment.TrainingHashtagsMaxNumber}}"  Value="True">
+                        <Setter Property="TextColor" Value="{x:StaticResource ErrorTextColor}"/>
+
+                        <!--Toggle Animation-->
+                        <DataTrigger.EnterActions>
+                            <triggers:ToggleAnimationTrigger DurationMilliseconds="150"/>
+                        </DataTrigger.EnterActions>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+
+    <ContentPage.Content>
+        <Grid Padding="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="46"/> 
+                <RowDefinition Height="auto"/> 
+                <RowDefinition Height="auto"/> 
+                <RowDefinition Height="30*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="60*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="10*"/>
+            </Grid.RowDefinitions>
+
+            <!--Add hashtag entry-->
+            <Entry Style="{x:StaticResource BorderlessEntryStyle}" 
+                   Text="{Binding HashtagText,Mode=TwoWay}"
+                   x:Name="NewHashtagName" 
+                   Grid.Row="0" 
+                   Grid.ColumnSpan="2">
+                <Entry.Behaviors>
+                    <behaviors:EventToCommandBehavior EventName="Completed" 
+                                                      Command="{Binding AddHashtagCommand}" 
+                                                      CommandParameter="{Binding Text,Source={x:Reference NewHashtagName}}"/>
+                </Entry.Behaviors>
+            </Entry>
+
+            <!--Suggested hashtags section-->
+            <BoxView Grid.Row="1"/>
+            <Label Style="{x:StaticResource SectionHeaderLeabel}"
+                   Text="You might like" 
+                   Grid.Row="2"/>
+            <ScrollView Orientation="Horizontal"
+                        Grid.Row="3"
+                        Grid.ColumnSpan="2">
+            <FlexLayout Direction="Column" 
+                        Wrap="Wrap" 
+                        BindableLayout.ItemsSource="{Binding UserFavouriteHashtags,Mode=TwoWay}" 
+                        AlignItems="Center">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Style="{x:StaticResource SuggestedHashtagFrame}" x:DataType="{x:Type models:SimpleTagElement}">
+                            <Label Text="{Binding Body}" 
+                                   Style="{StaticResource TagBodyLabel}"/>
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SuggestedHashtagSelectedCommand,Source={x:RelativeSource AncestorType={x:Type vm:TrainingPlanHashtagManagerViewModel}}}" 
+                                                      CommandParameter="{Binding .}"/>
+                            </Frame.GestureRecognizers>
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+            </ScrollView>
+
+            <!--My hashtags section-->
+            <BoxView Grid.Row="4"/>
+            <Label Style="{x:StaticResource SectionHeaderLeabel}"
+                   Text="Plan hashtags" 
+                   Grid.Row="5"/>
+            <controls:SimpleTagContainer ItemsSource="{Binding PlanHashtags,Mode=OneWay}"
+                                         OnRemoveCommand="{Binding RemoveHashtagCommand}"
+                                         Grid.Row="6"
+                                         Grid.ColumnSpan="2"
+                                         ReadOnly="False"/>
+            
+            <!--Hashtag Counter-->
+            <Label Style="{x:StaticResource HashtagCounterLabel}" Grid.Row="7" Grid.Column="1">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="{Binding PlanHashtags.Count}"/>
+                            <Span Text=" / "/>
+                            <Span Text="{x:Static utils:AppEnvironment.TrainingHashtagsMaxNumberString}"/>
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <!--Buttons section-->
+            <Button Text="Cancel" 
+                    Style="{x:StaticResource SecondaryButton}"
+                    Command="{Binding CancelCommand}" 
+                    Grid.Row="8"/>
+            <Button Text="Save" 
+                    Style="{x:StaticResource PrimaryButton}"
+                    Command="{Binding SaveCommand}" 
+                    Grid.Row="8" 
+                    Grid.Column="1"/>
+        </Grid>
+    </ContentPage.Content>
+</view:BaseView>

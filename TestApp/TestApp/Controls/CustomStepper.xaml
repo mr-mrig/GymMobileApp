@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="TestApp.Controls.CustomStepper"
+             x:Name="this">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <!--Stepper buttons-->
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{x:StaticResource SecondaryButtonBackgroundColor}"/>
+                <Setter Property="BorderColor" Value="{x:StaticResource SecondaryButtonBorderColor}"/>
+                <Setter Property="TextColor" Value="{x:StaticResource SecondaryButtonTextColor}"/>
+                <Setter Property="CornerRadius" Value="1"/>
+                <Setter Property="BorderWidth" Value="1"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+            </Style>
+            
+            <!--Label-->
+            <Style TargetType="Label">
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+            </Style>
+            
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <Grid BindingContext="{x:Reference this}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="DecreaseButton"
+                    Text="-" 
+                    Clicked="DecreaseButton_Clicked"
+                    IsEnabled="{Binding IsAboveLowerLimit}"/>
+            <Label Text="{Binding Value}" 
+                   Grid.Column="1"/>
+            <Button x:Name="IncreaseButton"
+                    Text="+" 
+                    Clicked="IncreaseButton_Clicked"
+                    Grid.Column="2"
+                    IsEnabled="{Binding IsBelowUpperLimit}"/>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ext="clr-namespace:TestApp.Extensions"
+             xmlns:behaviors="clr-namespace:TestApp.Behaviors"
+             xmlns:triggers="clr-namespace:TestApp.Triggers"
+             mc:Ignorable="d"
+             x:Class="TestApp.Controls.StarToggle"
+             x:Name="this">
+
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            
+            <Style TargetType="Label" x:Key="TitleLabel">
+                <Setter Property="FontSize" Value="Micro"/>
+                <Setter Property="Text" Value="Unstarred"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="TextColor" Value="{StaticResource SwitchFalseStateColor}"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsToggled,Source={Reference this}}" Value="True" x:DataType="x:Boolean">
+                        <Setter Property="Text" Value="Starred"/>
+                        <Setter Property="TextColor" Value="{StaticResource SwitchTrueStateColor}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="Image" x:Key="IconImage">
+                <Setter Property="WidthRequest" Value="24"/>
+                <Setter Property="HeightRequest" Value="24"/>
+                <Setter Property="Aspect" Value="AspectFit"/>
+                <Setter Property="Source" Value="{ext:ImageResource TestApp.Resources.star-icon-false.png}"/>
+                <Style.Triggers>
+                    <!--Shall we do this via SkiaSharp?-->
+                    <DataTrigger TargetType="Image" Binding="{Binding IsToggled,Source={Reference this}}" Value="True" x:DataType="x:Boolean">
+                        <Setter Property="Source" Value="{ext:ImageResource TestApp.Resources.star-icon-true.png}"/>
+                        
+                        <!--Toggle Animation-->
+                        <DataTrigger.EnterActions>
+                            <triggers:ToggleAnimationTrigger/>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <triggers:ToggleAnimationTrigger/>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ContentView.Content>
+        <StackLayout BindingContext="{x:Reference this}">
+
+            <Image Style="{StaticResource IconImage}" VerticalOptions="CenterAndExpand"/>
+            <Label Style="{StaticResource TitleLabel}" IsVisible="{Binding IsTitleVisible}"/>
+
+            <StackLayout.Behaviors>
+                <behaviors:ToggleBehavior IsToggled="{Binding IsToggled,Source={Reference this}}"
+                                          Command="{Binding ToggleCommand,Source={Reference this}}"
+                                          x:Name="ToggleButton"/>
+            </StackLayout.Behaviors>
+            
+        </StackLayout>
+  </ContentView.Content>
+</ContentView>

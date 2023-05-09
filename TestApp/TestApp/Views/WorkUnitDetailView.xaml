@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TestApp.ViewModels"
+             xmlns:behaviors="clr-namespace:TestApp.Behaviors"
+             xmlns:converters="clr-namespace:TestApp.Converters"
+             xmlns:effects="clr-namespace:TestApp.Effects"
+             mc:Ignorable="d"
+             x:Class="TestApp.Views.WorkUnitDetailView"
+             BackgroundColor="{x:StaticResource WhiteColor}"
+             x:Name="this">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            
+            <!--Constants-->
+            <x:Double x:Key="IntensityTechniquesColumnWidth">45</x:Double>
+            
+            <!--Converters-->
+            <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+            <converters:IntToNextIntConverter x:Key="ProgressiveNumberConverter"/>
+
+            <!--Progressive Number Label-->
+            <Style TargetType="Label" x:Key="WorkingSetNumberLabel">
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+            </Style>
+            <!--Intensity techniques label-->
+            <Style TargetType="Label" x:Key="IntensityTechniquesLabel">
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+                <Setter Property="MaxLines" Value="1"/>
+            </Style>
+
+            <!--Columns Headers Container-->
+            <Style TargetType="Grid" x:Key="TrainingParametersTitlesGrid">
+                <Setter Property="Margin" Value="13,10,0,0"/>
+                <Setter Property="IsVisible" Value="{Binding FormattedWorkingSets.Count}"/>
+            </Style>
+
+            <!--Columns Headers-->
+            <Style TargetType="Label" x:Key="WorkingSetColumnsHeader">
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+                <Setter Property="MaxLines" Value="1"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+            </Style>
+                        
+            <!--Working Sets Parameters: editing mode-->
+            <Style TargetType="Entry" x:Key="WorkingSetParameterEntry">
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <!--<Setter Property="IsVisible" Value="{Binding IsEditing,Source={x:RelativeSource AncestorType={x:Type vm:WorkUnitDetailViewModel}}}"/>-->
+                <Setter Property="IsEnabled" Value="{Binding IsEditing,Source={x:RelativeSource AncestorType={x:Type vm:WorkUnitDetailViewModel}}}"/>
+                <!--<Setter Property="BackgroundColor" Value="{Binding BackgroundColor,Source={Reference this}}"/>-->
+                <!--//RIGM the following is a UWP workaround: https://github.com/xamarin/Xamarin.Forms/issues/8787-->
+                <Setter Property="HeightRequest" Value="32"/>
+                <Setter Property="effects:BorderlessEntryEffect.IsBorderless" Value="True"/>
+                <!--<Style.Triggers>
+                    <DataTrigger TargetType="Entry" Binding="{Binding IsEditing,Source={x:Reference this}}" Value="False">
+                        <Setter Property="IsEnabled" Value="False"/>
+                    </DataTrigger>
+                </Style.Triggers>-->
+            </Style>
+            <!--Working set parameters: not editing-->
+            <!--//RIGM: UWP messing with the layout, disabling the following by now...-->
+            <!--<Style TargetType="Label" x:Key="WorkingSetParameterLabel">
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="IsVisible" Value="{Binding IsEditing,Converter={StaticResource InverseBooleanConverter},Source={x:RelativeSource AncestorType={x:Type vm:WorkUnitDetailViewModel}}}"/>
+                <Setter Property="HeightRequest" Value="32"/>
+            </Style>-->
+
+            <!--Remove Working set button-->
+            <Style TargetType="Label" x:Key="DeleteWorkingSetLabel">
+                <Setter Property="Text" Value="x"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Start"/>
+                <Setter Property="FontSize" Value="Title"/>
+                <Setter Property="IsVisible" Value="{Binding IsEditing,Source={x:RelativeSource AncestorType={x:Type vm:WorkUnitDetailViewModel}}}"/>
+            </Style>
+
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ContentView.Content>
+        <StackLayout>
+            <!--Columns Heading-->
+            <Grid Style="{x:StaticResource TrainingParametersTitlesGrid}" 
+                  x:DataType="{x:Type vm:WorkUnitDetailViewModel}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{x:StaticResource IntensityTechniquesColumnWidth}"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="{x:StaticResource MinimumTappableWidth}"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Style="{StaticResource WorkingSetColumnsHeader}" Text="IT"/>
+                <Label Style="{StaticResource WorkingSetColumnsHeader}" Text="Reps" Grid.Column="2"/>
+                <Label Style="{StaticResource WorkingSetColumnsHeader}" Text="Rest" Grid.Column="3"/>
+                <Label Style="{StaticResource WorkingSetColumnsHeader}" Text="Cadence" Grid.Column="4"/>
+                <Label Style="{StaticResource WorkingSetColumnsHeader}" Text="Effort" Grid.Column="5"/>
+            </Grid>
+            <!--Working Sets-->
+            <StackLayout Spacing="2" BindableLayout.ItemsSource="{Binding FormattedWorkingSets}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid x:DataType="{x:Type vm:WorkingSetViewModel}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{x:StaticResource IntensityTechniquesColumnWidth}"/>
+                                <ColumnDefinition Width="1"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="{x:StaticResource MinimumTappableWidth}"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--<Label Style="{x:StaticResource WorkingSetNumberLabel}" 
+                                   Text="{Binding ProgressiveNumber,Converter={x:StaticResource ProgressiveNumberConverter}}"/>-->
+
+                            <Label Style="{x:StaticResource IntensityTechniquesLabel}" 
+                                   Text="{Binding IntensityTechniques}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenIntensityTechniquesManagerCommand}" CommandParameter="{Binding .}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+
+                            <BoxView BackgroundColor="{x:StaticResource PrimarySeparatorColor}" Grid.Column="1"/>
+                            
+                            <!--<Entry Style="{x:StaticResource WorkingSetParameterEntry}" 
+                                       Text="{Binding ProgressiveNumber,Converter={x:StaticResource ProgressiveNumberConverter}}"/>-->
+                            <Entry Style="{x:StaticResource WorkingSetParameterEntry}" 
+                                   Text="{Binding FormattedRepetitions}"
+                                   Grid.Column="2">
+                                <Entry.Behaviors>
+                                    <behaviors:EventToCommandBehavior EventName="Completed"
+                                                                      Command="{Binding RepetitionsChangedCommand}" 
+                                                                      CommandParameter="{Binding .}"/>
+                                </Entry.Behaviors>
+                            </Entry>
+                            <!--<Label Style="{x:StaticResource WorkingSetParameterLabel}" 
+                                   Text="{Binding FormattedRepetitions'}" 
+                                   Grid.Column="1"/>-->
+                            <Entry Style="{x:StaticResource WorkingSetParameterEntry}" 
+                                   Text="{Binding Rest}" 
+                                   Grid.Column="3">
+                                <Entry.Behaviors>
+                                    <behaviors:EventToCommandBehavior EventName="Completed" 
+                                                                      Command="{Binding RestChangedCommand}" 
+                                                                      CommandParameter="{Binding .}"/>
+                                </Entry.Behaviors>
+                            </Entry>
+                            <!--<Label Style="{x:StaticResource WorkingSetParameterLabel}" 
+                                   Text="{Binding Rest,StringFormat='{0}\'\''}" 
+                                   Grid.Column="2"/>-->
+                            <Entry Style="{x:StaticResource WorkingSetParameterEntry}" 
+                                   Text="{Binding LiftingTempo}"
+                                   Grid.Column="4">
+                                <Entry.Behaviors>
+                                    <behaviors:EventToCommandBehavior EventName="Completed" 
+                                                                      Command="{Binding LiftingTempoChangedCommand}" 
+                                                                      CommandParameter="{Binding .}"/>
+                                </Entry.Behaviors>
+                            </Entry>
+                            <!--<Label Style="{x:StaticResource WorkingSetParameterLabel}" 
+                                   Text="{Binding LiftingTempo}" 
+                                   Grid.Column="3"/>-->
+                            <Entry Style="{x:StaticResource WorkingSetParameterEntry}" 
+                                   Text="{Binding Effort}" 
+                                   Grid.Column="5">
+                                <Entry.Behaviors>
+                                    <behaviors:EventToCommandBehavior EventName="Completed" 
+                                                                      Command="{Binding EffortChangedCommand}" 
+                                                                      CommandParameter="{Binding .}"/>
+                                </Entry.Behaviors>
+                            </Entry>
+                            <!--<Label Style="{x:StaticResource WorkingSetParameterLabel}" 
+                                   Text="{Binding Effort}" 
+                                   Grid.Column="4"/>-->
+
+                            <Label Style="{x:StaticResource DeleteWorkingSetLabel}" Grid.Column="6">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding DeleteWorkingSetCommand,Source={x:RelativeSource AncestorType={x:Type vm:WorkUnitDetailViewModel}}}"
+                                                          CommandParameter="{Binding .}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                                   
+                                   
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

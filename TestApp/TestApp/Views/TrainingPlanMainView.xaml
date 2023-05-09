@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseTabbedView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vmBase="clr-namespace:TestApp.ViewModels.Base"
+             xmlns:vm="clr-namespace:TestApp.ViewModels"
+             xmlns:views="clr-namespace:TestApp.Views"
+             xmlns:effects="clr-namespace:TestApp.Effects"
+             xmlns:datatemplateselectors="clr-namespace:TestApp.Views.DataTemplateSelectors"
+             xmlns:view="clr-namespace:TestApp.Views.Base"
+             mc:Ignorable="d"
+             vmBase:ViewModelLocator.AutoWireViewModel="True"
+             x:Class="TestApp.Views.TrainingPlanMainView"
+             x:DataType="{x:Type vm:TrainingPlanMainViewModel}"
+             ItemsSource="{Binding ChildViewModels}"
+             SelectedItem="{Binding SelectedChildViewModel}"
+             ItemTemplate="{StaticResource ChildTabSelector}"
+             Padding="0">
+
+    <!--<TabbedPage.Effects>
+        <effects:SelectedTabIndicatorColorEffect/>
+    </TabbedPage.Effects>-->
+
+
+    <TabbedPage.Resources>
+        <ResourceDictionary>
+
+            <DataTemplate x:Key="PlanDetailsTemplate">
+                <views:TrainingPlanDetailView/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="WorkoutDetails">
+                <views:TrainingPlanWorkoutView/>
+            </DataTemplate>
+
+            <datatemplateselectors:TrainingPlanChildTabSelector x:Key="ChildTabSelector"
+                                                                DetailTemplate="{StaticResource PlanDetailsTemplate}"
+                                                                WorkoutTemplate="{StaticResource WorkoutDetails}"/>
+        </ResourceDictionary>
+    </TabbedPage.Resources>
+
+    
+</view:BaseTabbedView>

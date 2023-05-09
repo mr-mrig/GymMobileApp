@@ -1,0 +1,300 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TestApp.ViewModels"
+             xmlns:vmBase="clr-namespace:TestApp.ViewModels.Base"
+             xmlns:view="clr-namespace:TestApp.Views.Base"
+             xmlns:utils="clr-namespace:TestApp.Services.Utils"
+             xmlns:controls="clr-namespace:TestApp.Controls"
+             xmlns:behaviors="clr-namespace:TestApp.Behaviors"
+             xmlns:templatedControls="clr-namespace:TestApp.Controls.Templated"
+             xmlns:effects="clr-namespace:TestApp.Effects"
+             mc:Ignorable="d"
+             vmBase:ViewModelLocator.AutoWireViewModel="False"
+             x:Class="TestApp.Views.TrainingPlanDetailView"
+             Title="Overview">
+
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <!--All the labels which are section headers should inherit from this-->
+            <Style TargetType="Label" x:Key="SectionHeaderLeabel">
+                <Setter Property="TextColor" Value="{x:StaticResource FloatingTextColor}"/>
+                <Setter Property="Margin" Value="10,5,0,0"/>
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+            </Style>
+            
+            <!--Relation Type dynamic label (might be invisible)-->
+            <Style TargetType="Label" BasedOn="{x:StaticResource SectionHeaderLeabel}" x:Key="RelationTypeLabel">
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+                <Setter Property="Text" Value=""/>
+                <Setter Property="VerticalTextAlignment" Value="End"/>
+                <Style.Triggers>
+                    <!--RIGM: why is this not working?-->
+                    <!--<DataTrigger TargetType="Label" Binding="{Binding TrainingPlan.Details.ParentPlan.RelationTypeId}" Value="{x:Static utils:Environment.TrainingPlanVariant}">-->
+                    <DataTrigger TargetType="Label" Binding="{Binding TrainingPlan.Details.ParentPlan.RelationTypeId}" Value="1">
+                        <Setter Property="Text" Value="Variant of"/>
+                    </DataTrigger>
+                    <!--RIGM: why is this not working?-->
+                    <!--<DataTrigger TargetType="Label" Binding="{Binding TrainingPlan.Details.ParentPlan.RelationTypeId}" Value="{x:Static utils:Environment.TrainingPlanReceived}">-->
+                    <DataTrigger TargetType="Label" Binding="{Binding TrainingPlan.Details.ParentPlan.RelationTypeId}" Value="2">
+                        <Setter Property="Text" Value="Received from"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Plan owner Avatar (might be invisible)-->
+            <Style TargetType="controls:UserAvatarChip" x:Key="PlanOwnerAvatar">
+                <Setter Property="IsVisible" Value="False"/>
+                <Style.Triggers>
+                    <!--RIGM: why is this not working?-->
+                    <!--<DataTrigger TargetType="controls:UserAvatarChip" Binding="{Binding TrainingPlan.Details.ParentPlan.RelationTypeId}" Value="{x:Static utils:Environment.TrainingPlanReceived}">-->
+                    <DataTrigger TargetType="controls:UserAvatarChip" Binding="{Binding TrainingPlan.Details.ParentPlan.RelationTypeId}" Value="2">
+                        <Setter Property="IsVisible" Value="True"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Parent plan name dynamic label (might be invisible)-->
+            <Style TargetType="Label" x:Key="ParentPlanNameLabel">
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+                <Setter Property="Text" Value=""/>
+                <Setter Property="IsVisible" Value="False"/>
+                <Setter Property="TextColor" Value="{x:StaticResource LinkTextColor}"/>
+                <Style.Triggers>
+                    <!--RIGM: why is this not working?-->
+                    <!--<DataTrigger TargetType="Label" Binding="{Binding TrainingPlan.Details.ParentPlan.RelationTypeId}" Value="{Static utils:Environment.TrainingPlanVariant}">-->
+                    <DataTrigger TargetType="Label" Binding="{Binding TrainingPlan.Details.ParentPlan.RelationTypeId}" Value="1">
+                        <Setter Property="IsVisible" Value="True"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="Entry" x:Key="BorderlessEntryStyle">
+                <Setter Property="effects:BorderlessEntryEffect.IsBorderless" Value="true"/>
+            </Style>
+
+            <Style TargetType="Editor" x:Key="BorderlessEditorStyle">
+                <Setter Property="effects:BorderlessEntryEffect.IsBorderless" Value="true"/>
+            </Style>
+
+            <!--Entries-->
+            <Style TargetType="templatedControls:CustomFloatingLabelEntry">
+                <Setter Property="FloatingTextColor" Value="{x:StaticResource FloatingTextColor}"/>
+                <Setter Property="BackgroundColor" Value="{x:StaticResource WhiteColor}"/>
+                <Setter Property="FocusedTitleColor" Value="{x:StaticResource AccentTextColor}"/>
+                <Setter Property="TitlePosition" Value="PlaceholderAligned"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="EntryTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <Entry Style="{x:StaticResource BorderlessEntryStyle}" 
+                                   MaxLength="{x:Static utils:EnvironmentConfigurations.TrainingPlanNameMaxLength}"
+                                   HeightRequest="46" 
+                                   FontSize="18"
+                                   Keyboard="Text"
+                                   IsSpellCheckEnabled="False"
+                                   IsTextPredictionEnabled="False"
+                                   ClearButtonVisibility="Never"/>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--Editors-->
+            <Style TargetType="templatedControls:CustomFloatingLabelEntry" x:Key="FloatingEditor">
+                <Setter Property="FloatingTextColor" Value="{x:StaticResource FloatingTextColor}"/>
+                <Setter Property="BackgroundColor" Value="{x:StaticResource WhiteColor}"/>
+                <Setter Property="FocusedTitleColor" Value="{x:StaticResource AccentTextColor}"/>
+                <Setter Property="TitlePosition" Value="PlaceholderAligned"/>
+
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="EntryTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <Editor Style="{x:StaticResource BorderlessEditorStyle}" 
+                                    MaxLength="{x:Static utils:EnvironmentConfigurations.TrainingPlanDescriptionMaxLength}" 
+                                    Keyboard="Text"
+                                    FontSize="18"
+                                    AutoSize="TextChanges"/>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--Sections Separators-->
+            <Style TargetType="BoxView">
+                <Setter Property="BackgroundColor" Value="{x:StaticResource FloatingEntryLayoutDelimiterColor}"/>
+                <Setter Property="HeightRequest" Value="1"/>
+                <Setter Property="Margin" Value="0,10,0,10"/>
+            </Style>
+            
+            <!--'See more' link text-->
+            <Style TargetType="Label" x:Key="LinkToViewLabel">
+                <Setter Property="HorizontalOptions" Value="End"/>
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+                <Setter Property="Padding" Value="20,5,20,5"/>
+                <Setter Property="TextColor" Value="{x:StaticResource LinkTextColor}"/>
+            </Style>
+            
+            <!--Weeks Counter-->
+            <Style TargetType="{x:Type controls:CustomStepper}">
+                <Setter Property="MinimumValue" Value="1"/>
+                <Setter Property="MaximumValue" Value="100"/>
+                <Setter Property="Increment" Value="1"/>
+            </Style>
+
+            <!--'Has progression' label-->
+            <Style TargetType="Label" BasedOn="{x:StaticResource SectionHeaderLeabel}" x:Key="HasProgressionLabel">
+                <Setter Property="Text" Value=""/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding HasProgression,Mode=OneWay}" Value="True">
+                        <Setter Property="Text" Value="Training plan with a progression over the weeks"/>
+                        <Setter Property="Margin" Value="0,10,0,0"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!--Proficiencies options grid-->
+            <Style TargetType="{x:Type templatedControls:OptionsGroupUniformGrid}" x:Key="ProficiencyOptions">
+                <Setter Property="Margin" Value="0,10,0,0"/>
+                <Setter Property="ColumnsNumber" Value="4"/>
+            </Style>
+            
+            <!--Phases options grid-->
+            <Style TargetType="{x:Type templatedControls:OptionsGroupUniformGrid}" x:Key="PhaseOptions">
+                <Setter Property="Margin" Value="0,10,0,0"/>
+                <Setter Property="ColumnsNumber" Value="3"/>
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+
+    <!--The focus on first entry is a UWP issue! 
+        See: https://stackoverflow.com/questions/42231163/is-it-possible-to-stop-the-first-entry-getting-focus-in-a-scrollview-in-xamarin
+        Note: Still nedd to ensure that Android and iOs are OK, otherwise a quick workaround is reported in the link above-->
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout x:DataType="{x:Type vm:TrainingPlanDetailViewModel}"
+                         BackgroundColor="{x:StaticResource WhiteColor}"
+                         Margin="10" >
+
+                <!--First Row: relation with parent plan - if any - and Bookmark flag -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+
+                    <StackLayout HorizontalOptions="Start">
+                        <Label Style="{StaticResource RelationTypeLabel}"/>
+
+                        <!--Only zero or one of the folllowing two is visible-->
+                        <controls:UserAvatarChip Style="{StaticResource PlanOwnerAvatar}" 
+                                                 UserName="MyDefaultUser"/>
+                        <Label Style="{StaticResource ParentPlanNameLabel}"
+                               Text="{Binding TrainingPlan.Details.ParentPlan.ParentName,Mode=OneWay,TargetNullValue='Plan not found'}"/>
+                    </StackLayout>
+
+                    <!--RIGM: the initial value is not working on UWP without any clear reason, check Droid and fix if necessary-->
+                    <controls:StarToggle IsToggled="{Binding TrainingPlan.Details.IsBookmarked,Mode=TwoWay}" 
+                                         OnToggleCommand="{Binding ChangeBookmarkFlagCommand}" 
+                                         Grid.Column="3"/>
+
+                </Grid>
+
+                <!--Plan name entry-->
+                <BoxView/>
+                <templatedControls:CustomFloatingLabelEntry Text="{Binding TrainingPlan.Details.Name,Mode=TwoWay}"
+                                                            Title="Program name"
+                                                            Placeholder="Give the program a name here...">
+                    <templatedControls:CustomFloatingLabelEntry.Behaviors>
+                        <behaviors:EventToCommandBehavior EventName="Unfocused" 
+                                                          Command="{Binding TrainingPlanNameChangedCommand}"
+                                                          CommandParameter="{Binding TrainingPlan.Details.Name}"/>
+                    </templatedControls:CustomFloatingLabelEntry.Behaviors>
+                </templatedControls:CustomFloatingLabelEntry>
+                <BoxView/>
+
+                <!--Plan description entry - expandable -->
+                <StackLayout HeightRequest="200" Margin="0">
+                    <!--RIGM: desciption not showing might be an UWP issue, see: https://forums.xamarin.com/discussion/20533/text-added-in-editor-is-not-shown-is-it-bug
+                        Please make sure that at least in Andorid is working, so no further actions might be needed - just let the UWP version have this issue
+                        Otherwise we might work around this by forcing some focus/unfocus actions or something similar -->
+                    <templatedControls:CustomFloatingLabelEntry Text="{Binding TrainingPlan.Details.Note}"
+                                                                Title="Program description"
+                                                                Placeholder="Give the program a brief description here..."
+                                                                Style="{x:StaticResource FloatingEditor}"/>
+                    <Label Text="See More" Style="{x:StaticResource LinkToViewLabel}"/>
+                </StackLayout>
+
+                <!--Number of weeks -->
+                <BoxView/>
+                <Label Text="Number of weeks" Style="{x:StaticResource SectionHeaderLeabel}"/>
+                <controls:CustomStepper Command="{Binding TrainingWeekChangedCommand}"
+                                        Value="{Binding TrainingWeeksCounter,Mode=TwoWay}"
+                                        x:Name="WeeksStepper" 
+                                        Margin="0,5,0,0"/>
+
+                <Label Style="{x:StaticResource HasProgressionLabel}"/>
+
+                <!--Proficiencies-->
+                <BoxView/>
+                <Label Text="Targets" Style="{x:StaticResource SectionHeaderLeabel}"/>
+                <templatedControls:OptionsGroupUniformGrid Style="{x:StaticResource ProficiencyOptions}"
+                                                           ItemTemplate="{x:StaticResource OptionGroupTemplate}"
+                                                           ItemsSource="{x:Static utils:AppEnvironment.TrainingProficiencies}"
+                                                           SelectedItems="{Binding TrainingPlan.Details.TargetProficiencies}">
+
+                    <templatedControls:OptionsGroupUniformGrid.Behaviors>
+                        <behaviors:EventToCommandBehavior EventName="SelectedItemChanged"
+                                                          Command="{Binding ProficienciesChangedCommand}"/>
+                    </templatedControls:OptionsGroupUniformGrid.Behaviors>
+                </templatedControls:OptionsGroupUniformGrid>
+
+                <!--Phases-->
+                <BoxView/>
+                <Label Text="Suitable for" Style="{x:StaticResource SectionHeaderLeabel}"/>
+                <!--<controls:SimpleTagContainer ItemsSource="{Binding TrainingPlan.Details.TargetPhases}"/>-->
+                <templatedControls:OptionsGroupUniformGrid Style="{x:StaticResource PhaseOptions}"
+                                                           ItemsSource="{x:Static utils:AppEnvironment.TrainingPhases}"
+                                                           ItemTemplate="{x:StaticResource OptionGroupTemplate}"
+                                                           SelectedItems="{Binding TrainingPlan.Details.TargetPhases}">
+                    
+                    <templatedControls:OptionsGroupUniformGrid.Behaviors>
+                        <behaviors:EventToCommandBehavior EventName="SelectedItemChanged"
+                                                          Command="{Binding PhasesChangedCommand}"/>
+                    </templatedControls:OptionsGroupUniformGrid.Behaviors>
+                </templatedControls:OptionsGroupUniformGrid>
+
+                <!--Hashtags-->
+                <BoxView/>
+                <Label Text="Tags" Style="{x:StaticResource SectionHeaderLeabel}"/>
+                <controls:SimpleTagContainer ItemsSource="{Binding TrainingPlan.Details.Hashtags}"/>
+                <Label Text="Manage Hashtags" 
+                       Style="{x:StaticResource LinkToViewLabel}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateToHashtagsManagerCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <!--Muscle Focus-->
+                <BoxView/>
+                <Label Text="Tags" Style="{x:StaticResource SectionHeaderLeabel}"/>
+                <controls:SimpleTagContainer ItemsSource="{Binding TrainingPlan.Details.MusclesFocuses}"/>
+                <Label Text="Manage Focuses" Style="{x:StaticResource LinkToViewLabel}"/>
+                
+                
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</view:BaseView>

@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:PopupPage 
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:TestApp.Converters"
+    xmlns:popupVm="clr-namespace:TestApp.ViewModels.Popups.Common"
+    xmlns:vmBase="clr-namespace:TestApp.ViewModels.Base"
+    xmlns:vm="clr-namespace:TestApp.ViewModels.Popups.Common"
+    xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+    xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
+    x:Class="TestApp.Views.Popups.Common.DestructiveActionPopupView"
+    vmBase:ViewModelLocator.AutoWireViewModel="True"
+    x:Name="this">
+
+    <pages:PopupPage.Resources>
+        <ResourceDictionary>
+
+            <!--Converters-->
+            <converters:IsStringNullOrEmptyConverter x:Key="IsEmptyStringConverter"/>
+
+            <!--Dynamic grid style-->
+            <RowDefinitionCollection x:Key="NoTitleRowDefinition">
+                <RowDefinition Height="0"/>
+                <RowDefinition Height="0"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </RowDefinitionCollection>
+            <RowDefinitionCollection x:Key="TitledRowDefinition">
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </RowDefinitionCollection>
+
+            <Style TargetType="Grid" x:Key="DynamicGrid">
+                <Setter Property="ColumnSpacing" Value="25"/>
+                <Setter Property="Padding" Value="10,0,10,0"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="Grid" Binding="{Binding TitleText,Converter={x:StaticResource IsEmptyStringConverter}}" Value="True">
+                        <Setter Property="RowDefinitions" Value="{x:StaticResource NoTitleRowDefinition}"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Grid" Binding="{Binding TitleText,Converter={x:StaticResource IsEmptyStringConverter}}" Value="False">
+                        <Setter Property="RowDefinitions" Value="{x:StaticResource TitledRowDefinition}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Root label style-->
+            <Style TargetType="Label" x:Key="PopupBasicLabel">
+                <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+                <Setter Property="TextColor" Value="{x:StaticResource PrimaryTextColor}"/>
+            </Style>
+            
+            <!--Remember me option-->
+            <Style TargetType="StackLayout" x:Key="RememberMePanel">
+                <Setter Property="Orientation" Value="Horizontal"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="StackLayout" Binding="{Binding EnableRememberMe}" Value="False">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="CheckBox">
+                <Setter Property="Color" Value="{x:StaticResource PrimaryColor}"/>
+            </Style>
+            
+            <Style TargetType="Label" BasedOn="{x:StaticResource PopupBasicLabel}" x:Key="RememberMeLabel">
+                <Setter Property="Text" Value="{x:Static popupVm:DestructiveActionPopupViewModel.RememberMeOptionText}"/>
+                <Setter Property="TextColor" Value="{StaticResource PlaceholderTextColor}"/>
+                <Setter Property="Margin" Value="0,10,0,10"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsChecked,Source={x:Reference RememberMeCheckbox}}" Value="True">
+                        <Setter Property="TextColor" Value="{x:StaticResource LinkTextColor}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--Labels-->
+            <Style TargetType="Label" BasedOn="{x:StaticResource PopupBasicLabel}" x:Key="MessageLabel">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding TitleText,Converter={x:StaticResource IsEmptyStringConverter}}" Value="False">
+                        <Setter Property="Margin" Value="0,10,0,0"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="Label" BasedOn="{x:StaticResource PopupBasicLabel}" x:Key="TitleLabel">
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+            </Style>
+
+            <Style TargetType="Label" BasedOn="{x:StaticResource PopupBasicLabel}" x:Key="ActionLabel">
+                <Setter Property="Margin" Value="0,10,0,0"/>
+                <Setter Property="Padding" Value="20,10,20,10"/>
+            </Style>
+
+            <Style TargetType="BoxView">
+                <Setter Property="Color" Value="{x:StaticResource PrimarySeparatorColor}"/>
+                <Setter Property="HeightRequest" Value="1"/>
+                <Style.Triggers>
+                    <DataTrigger TargetType="BoxView" Binding="{Binding TitleText,Converter={x:StaticResource IsEmptyStringConverter}}" Value="True">
+                        <Setter Property="HeightRequest" Value="0"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="Label" BasedOn="{x:StaticResource ActionLabel}" x:Key="DestructiveActionLabel">
+                <Setter Property="TextColor" Value="{x:StaticResource ErrorTextColor}"/>
+            </Style>
+
+            <Style TargetType="Label" BasedOn="{x:StaticResource ActionLabel}" x:Key="CancelActionLabel">
+                <Setter Property="TextColor" Value="{x:StaticResource PrimaryTextColor}"/>
+            </Style>
+
+        </ResourceDictionary>
+    </pages:PopupPage.Resources>
+    
+    <pages:PopupPage.Animation>
+        <animations:ScaleAnimation 
+            PositionIn="Center"
+            PositionOut="Center"
+            ScaleIn="1.2"
+            ScaleOut="0.8"
+            DurationIn="400"
+            DurationOut="300"
+            EasingIn="SinOut"
+            EasingOut="SinIn"
+            HasBackgroundAnimation="True"/>
+    </pages:PopupPage.Animation>
+
+    <Frame VerticalOptions="Center" 
+           HorizontalOptions="Center" 
+           Margin="40"
+           CornerRadius="20"
+           BackgroundColor="{Binding PopupColor}"
+           x:DataType="{x:Type vm:DestructiveActionPopupViewModel}">
+        <Grid Style="{x:StaticResource DynamicGrid}">
+            <Label Text="{Binding TitleText}" 
+                   Style="{x:StaticResource TitleLabel}"
+                   Grid.ColumnSpan="2"/>
+            <BoxView Grid.Row="1"
+                     Grid.ColumnSpan="2"/>
+            <Label Text="{Binding MessageText}" 
+                   Style="{x:StaticResource MessageLabel}"
+                   Grid.Row="2"
+                   Grid.ColumnSpan="2"/>
+            <StackLayout Style="{x:StaticResource RememberMePanel}"
+                         Grid.Row="3"
+                         Grid.ColumnSpan="2">
+                <CheckBox IsChecked="{Binding RememberMe}" 
+                          x:Name="RememberMeCheckbox"/>
+                <Label Style="{x:StaticResource RememberMeLabel}"/>
+            </StackLayout>
+            <Label Text="{Binding CancelActionText}" 
+                   Style="{x:StaticResource CancelActionLabel}" 
+                   Grid.Row="4" 
+                   Grid.Column="0">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OnCancelCommand}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Text="{Binding MainActionText}"
+                   Style="{x:StaticResource DestructiveActionLabel}"
+                   Grid.Row="4" 
+                   Grid.Column="1">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OnConfirmCommand}"/>
+                </Label.GestureRecognizers>
+            </Label>
+        </Grid>
+        
+    </Frame>
+</pages:PopupPage>

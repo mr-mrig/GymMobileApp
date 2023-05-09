@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:imgcirc="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin"
+             xmlns:ext="clr-namespace:TestApp.Extensions"
+             mc:Ignorable="d"
+             x:Class="TestApp.Controls.UserAvatarChip"
+             x:Name="this">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            
+            <Style TargetType="Label">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+                <Setter Property="Margin" Value="4,0,0,0"/>
+                <Setter Property="LineBreakMode" Value="NoWrap"/>
+            </Style>
+
+            <Style TargetType="Frame">
+                <Setter Property="BackgroundColor" Value="{StaticResource UserAvatarChipColor}"/>
+                <Setter Property="Padding" Value="8,2,8,2"/>
+                <Setter Property="CornerRadius" Value="14"/>
+            </Style>
+            
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ContentView.Content>
+        <Frame>
+            <StackLayout Orientation="Horizontal">
+
+                <!--For testing purposes-->
+                <imgcirc:CircleImage Source="{ext:ImageResource TestApp.Resources.avatar.png}"
+                                 WidthRequest="24"
+                                 HeightRequest="24"
+                                 Aspect="AspectFill"/>
+                <!--<imgcirc:CircleImage Source="{Binding ProfileImageUrl,Source={Reference this}}"
+                                 WidthRequest="48"
+                                 HeightRequest="48"
+                                 Aspect="AspectFill"/>-->
+                
+                <Label Text="{Binding UserName,Source={Reference this},FallbackValue=UserNotFound,TargetNullValue=InvalidUser}"/>
+            </StackLayout>
+        </Frame>
+    </ContentView.Content>
+</ContentView>

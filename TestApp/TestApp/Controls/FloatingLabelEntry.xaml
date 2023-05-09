@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:TestApp.Converters"
+             xmlns:local="clr-namespace:TestApp.Controls"
+             mc:Ignorable="d"
+             x:Class="TestApp.Controls.FloatingLabelEntry"
+             x:Name="this">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:IntToGridLengthConverter x:Key="FloatingLabelHeightConverter"/>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ContentView.Content>
+        <Grid BindingContext="{x:Reference this}" 
+              BackgroundColor="Blue"
+              Padding="0,10,0,0"> <!--Do not remove the padding! It is needed to ensure a small margin is preserved wehn approximating the row1 height-->
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="{Binding .,Source={Reference this},Converter={x:StaticResource FloatingLabelHeightConverter},ConverterParameter={x:Static local:FloatingLabelEntry.TitleFontSize}}"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Entry x:Name="InputEntry"
+                   Text="{Binding Text}" 
+                   ReturnType="{Binding ReturnType}"
+                   IsPassword="{Binding IsPassword}"
+                   Keyboard="{Binding Keyboard}"
+                   TextColor="{Binding TextColor}"
+                   HeightRequest="46"
+                   Completed="OnEntryCompleted" 
+                   Unfocused="OnEntryUnfocused" 
+                   Focused="OnEntryFocused"
+                   Margin="0"
+                   Grid.Row="1">
+            </Entry>
+            <Label x:Name="TitleLabel"
+                   Text="{Binding Title}"
+                   TextColor="{Binding FloatingLabelColor}"
+                   VerticalOptions="Center"
+                   Margin="0"
+                   Grid.Row="1">
+            </Label>
+
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnControlTapped" />
+            </Grid.GestureRecognizers>
+
+        </Grid>
+    </ContentView.Content>
+</ContentView>
